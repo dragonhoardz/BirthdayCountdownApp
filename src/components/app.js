@@ -22,7 +22,8 @@ export default class App extends Component {
         hours: 0,
         minutes: 0,
         seconds: 0
-      }
+      },
+      age: 0
     }
     
     this.handleGenerate = this.handleGenerate.bind(this)
@@ -37,26 +38,35 @@ export default class App extends Component {
   }.bind(this)
   
     handleGenerate = function() {
-      this.setState({ active: true });
       
+
     var bday = this.state.startDate.toDate();
     var today = new Date();
     var currentMonth = today.getMonth();
     var birthMonth = bday.getMonth();
     
+    
+    var timeBetween = today.getTime() - bday.getTime();
+    var daysOld = Math.floor(timeBetween / (1000 * 60 * 60 * 24));
+    var age = Number((daysOld/365).toFixed(0));
+    this.setState({ 
+      age, 
+      active: true 
+    });
+    
      if(birthMonth > currentMonth) {
-      bday.setFullYear(today.getFullYear())
+      bday.setFullYear(today.getFullYear());
     } else if(birthMonth < currentMonth) {
-      bday.setFullYear(today.getFullYear() + 1)
+      bday.setFullYear(today.getFullYear() + 1);
     } else if(birthMonth == currentMonth) {
       var currentDay = today.getDate();
       var birthDay = bday.getDate();
       
        if(birthDay > currentDay) {
-        bday.setFullYear(today.getFullYear())
+        bday.setFullYear(today.getFullYear());
       }
       if(birthDay <= currentDay) {
-        bday.setFullYear(today.getFullYear() + 1)
+        bday.setFullYear(today.getFullYear() + 1);
       }
     }
 
@@ -69,7 +79,9 @@ export default class App extends Component {
       var distance = countDownDate - now;
     
       var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var hours = Math.floor(
+        (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      );
       var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
       var seconds = Math.floor((distance % (1000 * 60)) / 1000);
     
@@ -79,8 +91,8 @@ export default class App extends Component {
         hours,
         minutes,
         seconds
-      }
-      this.setState({ timeRemaining })
+      };
+      this.setState({ timeRemaining });
     
       if (distance < 0) {
         clearInterval(this.timer);
@@ -95,7 +107,7 @@ export default class App extends Component {
         <Clock timeRemaining={this.state.timeRemaining}/>,
         ChangeDate('Change Date', () => this.setState({ active: false })),
         LargeText('04/03'),
-        <label className="grid__remaining">Remaining until your 21st birthday</label>
+        <label className="grid__remaining">Remaining until you turn {this.state.age}</label>
       ]
     } else {
       return [
